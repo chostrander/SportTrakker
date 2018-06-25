@@ -1,0 +1,38 @@
+buildscript {
+	ext {
+		springBootVersion = '2.0.3.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+plugins {
+    id 'java'
+    id "com.gorylenko.gradle-git-properties" version "1.5.1"
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+group = 'org.hoss.gitprops'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = 10
+
+repositories {
+	mavenCentral()
+}
+
+gitProperties {
+    dotGitDirectory = "${project.rootDir}/../.git"
+}
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-actuator')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}

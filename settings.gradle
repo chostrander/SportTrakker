@@ -18,3 +18,5 @@ include 'services:webservice'
 rootProject.name = 'SportTrakker'
 
 include 'ReadGoogleSheets'
+include 'TeamTrakker'
+include 'git-properties'
