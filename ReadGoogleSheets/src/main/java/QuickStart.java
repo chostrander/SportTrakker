@@ -7,6 +7,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.json.JsonFactory;
+import com.google.api.client.util.Value;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.*;
@@ -102,42 +103,30 @@ public class QuickStart {
         //https://docs.google.com/spreadsheets/d/10f4E_6B9NBZglLAVaSPqsz--z0jNcZ3ltCOIPwB7EEI/edit?ts=5a4ec4cd#gid=0
         String spreadsheetId = "10f4E_6B9NBZglLAVaSPqsz--z0jNcZ3ltCOIPwB7EEI";
         String range = "Schedule!A1:E";
+        printRange(range,spreadsheetId,service);
+        range = "Schedule!H1:L";
+        printRange(range,spreadsheetId,service);
+        range = "Schedule!O1:S";
+        printRange(range,spreadsheetId,service);
+        range = "Schedule!V1:Z";
+        printRange(range,spreadsheetId,service);
+        range = "Schedule!AC1:AG";
+        printRange(range,spreadsheetId,service);
+        range = "Schedule!AJ1:AN";
+        printRange(range,spreadsheetId,service);
+        range = "Schedule!AQ1:AU";
+        printRange(range,spreadsheetId,service);
+
+    }
+
+    private static void printRange(String range, String spreadSheetId, Sheets service) throws IOException {
         ValueRange response = service.spreadsheets().values()
-                .get(spreadsheetId, range)
+                .get(spreadSheetId, range)
                 .execute();
         List<List<Object>> values = response.getValues();
         boolean foundTitle = true;
         boolean foundDay = false;
         boolean foundDate = false;
-        if (values == null || values.size() == 0) {
-            System.out.println("No data found.");
-        } else {
-            System.out.println("Processing Mondays");
-            System.out.println("time,game,ref");
-            for (List row : values) {
-                if (row.size() == 1 && ((String)row.get(0)).startsWith("American Indoor")) {
-                    System.out.println(row.get(0));
-                } else if (row.size() == 1 && ((String)row.get(0)).endsWith("DAY")) {
-                    System.out.println(row.get(0));
-                } else if (row.size() == 1 && ((String)row.get(0)).matches("[a-zA-z]*\\s\\d{1,2},\\s\\d{4}")) {
-                    System.out.println(row.get(0));
-                } else if (row.size() == 5 && !((String)row.get(0)).equalsIgnoreCase("TIMES")) {
-                    System.out.printf("%s\t%s\t%s\n",row.get(0),row.get(4),row.get(2));
-                } else if (row.size() == 3 && ((String)row.get(2)).contains(" v ")) {
-                    System.out.printf("%s\tNo Ref\t%s\n",row.get(0),row.get(2));
-                }
-
-            }
-        }
-
-        range = "Schedule!H1:L";
-        response = service.spreadsheets().values()
-                .get(spreadsheetId, range)
-                .execute();
-        values = response.getValues();
-        foundTitle = true;
-        foundDay = false;
-        foundDate = false;
         if (values == null || values.size() == 0) {
             System.out.println("No data found.");
         } else {
