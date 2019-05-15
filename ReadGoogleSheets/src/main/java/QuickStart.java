@@ -7,17 +7,20 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.util.Value;
+
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.*;
 import com.google.api.services.sheets.v4.Sheets;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+
+import java.util.*;
 
 public class QuickStart {
 
@@ -56,12 +59,8 @@ public class QuickStart {
             System.exit(1);
         }
     }
-    /**
-     * Creates an authorized Credential object.
-     * @return an authorized Credential object.
-     * @throws IOException
-     */
-    public static Credential authorize() throws IOException {
+
+    private static Credential authorize() throws IOException {
         // Load client secrets.
         InputStream in =
                 QuickStart.class.getResourceAsStream("/client_secret.json");
@@ -82,19 +81,14 @@ public class QuickStart {
         return credential;
     }
 
-    /**
-     * Build and return an authorized Sheets API client service.
-     * @return an authorized Sheets API client service
-     * @throws IOException
-     */
-    public static Sheets getSheetsService() throws IOException {
+     private static Sheets getSheetsService() throws IOException {
         Credential credential = authorize();
         return new Sheets.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
                 .setApplicationName(APPLICATION_NAME)
                 .build();
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ParseException {
         // Build a new authorized API client service.
         Sheets service = getSheetsService();
 
@@ -119,14 +113,13 @@ public class QuickStart {
 
     }
 
-    private static void printRange(String range, String spreadSheetId, Sheets service) throws IOException {
+    private static void printRange(String range, String spreadSheetId, Sheets service) throws IOException, ParseException {
         ValueRange response = service.spreadsheets().values()
                 .get(spreadSheetId, range)
                 .execute();
         List<List<Object>> values = response.getValues();
-        boolean foundTitle = true;
-        boolean foundDay = false;
-        boolean foundDate = false;
+
+         SimpleDateFormat sFormatter = new SimpleDateFormat("MMM dd, yyyy");
         if (values == null || values.size() == 0) {
             System.out.println("No data found.");
         } else {
@@ -138,7 +131,9 @@ public class QuickStart {
                 } else if (row.size() == 1 && ((String)row.get(0)).endsWith("DAY")) {
                     System.out.println(row.get(0));
                 } else if (row.size() == 1 && ((String)row.get(0)).matches("[a-zA-z]*\\s\\d{1,2},\\s\\d{4}")) {
-                    System.out.println(row.get(0));
+                    Date date = sFormatter.parse(row.get(0).toString());
+
+                    System.out.println("Date--> "+ date.toString());
                 } else if (row.size() == 5 && !((String)row.get(0)).equalsIgnoreCase("TIMES")) {
                     System.out.printf("%s\t%s\t%s\n",row.get(0),row.get(4),row.get(2));
                 } else if (row.size() == 3 && ((String)row.get(2)).contains(" v ")) {
